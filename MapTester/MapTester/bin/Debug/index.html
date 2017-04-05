@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+  <script src="assets/js/jquery-2.1.1.min.js"></script>
+  <link rel="stylesheet" href="assets/css/styles.css" />
+  <link rel="stylesheet" href="assets/countdown/jquery.countdown.css" />
+  <link href="assets/css/ProgressBarWars.css" rel="stylesheet" />
+  <script src="assets/countdown/jquery.countdown.js"></script>
+  <script src="assets/js/ProgressBarWars.js"></script>  
+</head>
+<body>
+<script type="text/javascript">	
+
+	function SetPercent(percent){
+		vd.mover(percent)	 
+	}
+	function SetClock(Timespan){
+		ts = (new Date()).getTime() + Timespan;		
+		$('#countdown').Init({
+			timestamp	: ts,
+			callback	: function(hours, minutes, seconds){
+			}
+		});	
+	}
+	function SetTextClass(Type){
+		if(Type){
+			document.getElementById("testBox").className = "box-bling";
+		}
+		else{
+			document.getElementById("testBox").className = "box";
+		}
+	}
+	
+	var TimeAll = 25;
+	var TimeC = 0;
+	var Index = 0;
+	var Str = "[{\"name\":\"A1\",\"length\":10},{\"name\":\"A2\",\"length\":11},{\"name\":\"A3\",\"length\":12}]";
+	var obj = JSON.parse(Str);;
+	window.onload=function(){	
+		var sum = 0;
+		for(var s in obj){
+			sum += obj[s].length
+		}
+		TimeAll = sum;
+		SetClock(TimeAll * 1000);
+		setInterval("Run()", 100);
+		$.get('/abc.json').done(function(data){
+		alert("1");
+		});	
+	}
+	
+
+	
+	function Run() {
+		TimeC += 1;
+		percent = 100 - 1.0 * TimeC * 10 / obj[Index].length;
+		SetPercent(percent);
+		$("#testBox").html(obj[Index].name);
+		if(TimeC < obj[Index].length * 10 - 30) {
+			SetTextClass(false);
+		}
+		else{
+			SetTextClass(true);
+		}
+		if(TimeC == obj[Index].length * 10) {
+			TimeC = 0;
+			Index = Index + 1;
+		}		
+		if(Index == obj.length) {
+			$("#testBox").html("Finish");
+			SetTextClass(false);
+		}
+	}
+	
+</script>		
+<style>
+.div-a{position:absolute;left:0px; top:0px}
+.div-b{position:absolute;left:33%; top:55%; width:33%;text-align:center; margin:0 auto}
+.div-margin{margin:15px}
+.box{font-size: 32px; color:#f00; font-weight: bold;  }
+.box-bling{ animation: change 0.5s  ease-in  infinite ; font-size: 32px; color:#f00; font-weight: bold; }
+@keyframes change {
+	0%{ text-shadow: 0 0 4px #C6E2FF}
+	50%{ text-shadow: 0 0 40px #C6E2FF}
+	100%{ text-shadow: 0 0 4px #C6E2FF}
+}
+.boxed-velvet{
+    background: url(images/bg-widget2.png) repeat;
+    border-radius: 8px;
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;
+    box-shadow: 5px 5px 22px -2px rgba(0, 0, 0, 0.5);
+    -webkit-box-shadow: 5px 5px 22px -2px rgba(0, 0, 0, 0.5);
+    -moz-box-shadow: 5px 5px 22px -2px rgba(0, 0, 0, 0.5);
+    border-top:1px solid #5e6771;
+    border-left:1px solid #525B68;
+	margin:5px;
+}
+</style>
+<div class="div-b boxed-velvet">
+	<a id="testBox" class="box"></a>
+	<div class="progress div-margin"  id="example1"></div>
+	<script>
+		var vd = $("#example1").ProgressBarWars({porcentaje:100,color:"#FF7222",tiempo:0});
+	</script>
+	<div id="countdown"></div>
+</div>
+<audio autoplay="autoplay" loop="loop" preload="auto"
+            src="1.mp3">
+      你的浏览器不支持audio标签
+</audio>
+</body>
+</html>
